@@ -1,0 +1,22 @@
+CREATE DATABASE IF NOT EXISTS social_db;
+USE social_db;
+
+CREATE TABLE IF NOT EXISTS missatges (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    text VARCHAR(280) NOT NULL,
+    data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    likes INT DEFAULT 0,
+    dislikes INT DEFAULT 0,
+    latitud DECIMAL(9,6) NOT NULL,
+    longitud DECIMAL(9,6) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS comentaris (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_missatge INT NOT NULL,
+    text VARCHAR(280) NOT NULL,
+    likes INT DEFAULT 0,
+    dislikes INT DEFAULT 0,
+    data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_missatge) REFERENCES missatges(id) ON DELETE CASCADE
+);

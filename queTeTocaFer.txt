@@ -1,0 +1,30 @@
+Hola, un mica de paciència i tranquiŀlitat. Gràcies.
+
+
+Has aconseguit que la home_page.dart llegeixi missatges i els mostri.
+
+Ara toca fer que funcioni el new_post_page.dart. No s'estan pujant els missatges a la base de dades perquè no estàs enviant a l'API el format que toca.
+
+Modifica el toJson del model missatge per enviar únicament els camps necessaris.
+
+Latitud i longitud estàs enviant null → no tocaria ser així.
+
+Pensa afegir els botons de like i dislike a la home_page.dart.
+
+--------------------------------------------------------------
+
+També has d'afegir els botons de like i dislike pel missatge dins message_detail_page.dart
+
+A més, has d'afegir els botons de like i dislike als comentaris.
+
+També has d'afegir que es puguin publicar comentaris.
+
+--------------------------------------------------------------
+
+Has d'afegir mètodes a api_provider.dart per afegir i llevar likes i dislikes (4 mètodes en total si no vaig errat)
+
+Comprova si l'api permet afegir i llevar likes i dislikes o si s'han de fer o modificar mètodes.
+
+--------------------------------------------------------------
+
+ara toca que es puguin pujar nous missatges!
