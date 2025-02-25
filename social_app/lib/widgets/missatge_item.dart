@@ -38,11 +38,13 @@ class MissatgeItem extends StatelessWidget {
       final currentTime = DateTime.now();
       final missatgeTime = missatge.dataHora; // Assegura't que `missatge.dataHora` sigui de tipus DateTime
       final difference = currentTime.difference(missatgeTime).inHours;
+      final diffMinuts = currentTime.difference(missatgeTime).inMinutes;
 
+      if (diffMinuts < 60) return 'Fa $diffMinuts minuts';
       if (difference < 24) {
         return 'Fa $difference hores';
       } else {
-        return '${missatge.dataHora}';
+        return '${missatge.dataHora.day}/${missatge.dataHora.month}/${missatge.dataHora.year}';
       }
     } catch (e) {
       print("Error calculant la data: $e");

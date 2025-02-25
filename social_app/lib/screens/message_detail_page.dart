@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/missatge.dart';
 import '../models/comentari.dart';
+import '../providers/api_provider.dart';
+import '../widgets/comment_list.dart';
+import '../widgets/comment_input.dart';
 
 class MessageDetailPage extends StatefulWidget {
   final Missatge missatge;
@@ -12,7 +15,10 @@ class MessageDetailPage extends StatefulWidget {
 }
 
 class _MessageDetailPageState extends State<MessageDetailPage> {
+  final ApiProvider _apiProvider = ApiProvider();
   List<Comentari> comentaris = [];
+  bool _isLoading = true;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -21,19 +27,25 @@ class _MessageDetailPageState extends State<MessageDetailPage> {
   }
 
   Future<void> _carregarComentaris() async {
-    // Aquí es faria la crida a l'API per obtenir els comentaris
+    try {
+      final comentarisObtinguts = await _apiProvider.getComentaris(widget.missatge.id);
+      setState(() {
+        comentaris = comentarisObtinguts;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = "Error en carregar els comentaris";
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _afegirComentari(Comentari nouComentari) async {
     setState(() {
-      comentaris = [
-        Comentari(
-          id: 1,
-          idMissatge: widget.missatge.id,
-          text: "Interessant punt de vista!",
-          dataHora: DateTime.now(),
-          likes: 5,
-          dislikes: 1,
-        ),
-      ];
+      comentaris.insert(0, nouComentari); // Afegim a la llista localment
     });
+    _carregarComentaris(); // Recàrrega des de la API per mantenir consistència
   }
 
   @override
@@ -41,24 +53,29 @@ class _MessageDetailPageState extends State<MessageDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Detall del Missatge"),
+        backgroundColor: const Color.fromARGB(255, 200, 200, 200),
       ),
       body: Column(
         children: [
-          Padding(
+          Container(
+            width: double.infinity, // Amplada completa
+            color: Color.fromARGB(255, 224, 224, 224), // Fons gris clar per tota la secció
             padding: const EdgeInsets.all(16.0),
-            child: Text(widget.missatge.text, style: TextStyle(fontSize: 18)),
+            child: Text(
+              widget.missatge.text,
+              style: TextStyle(fontSize: 18),
+            ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: comentaris.length,
-              itemBuilder: (context, index) {
-                final comentari = comentaris[index];
-                return ListTile(
-                  title: Text(comentari.text),
-                  subtitle: Text("${comentari.likes} Likes - ${comentari.dislikes} Dislikes"),
-                );
-              },
+            child: CommentList(
+              comentaris: comentaris,
+              isLoading: _isLoading,
+              errorMessage: _errorMessage,
             ),
+          ),
+          CommentInput(
+            missatgeId: widget.missatge.id,
+            onCommentAdded: _afegirComentari,
           ),
         ],
       ),

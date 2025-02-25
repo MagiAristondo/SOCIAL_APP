@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/screens/login/splash_screen.dart';
 import 'package:social_app/screens/new_post.dart';
 import '../models/missatge.dart';
 import '../screens/home_page.dart';
-import '../screens/login_page.dart';
-import '../screens/register_page.dart';
+import '../screens/login/login_screen.dart';
+//import '../screens/register_page.dart';
 import '../screens/settings_page.dart';
 import '../screens/message_detail_page.dart';
 
@@ -12,10 +13,12 @@ class AppRouter {
     switch (settings.name) {
       case '/':
         return MaterialPageRoute(builder: (_) => HomePage());
+      case '/splash':
+        return MaterialPageRoute(builder: (_) => SplashScreen());
       case '/login':
-        return MaterialPageRoute(builder: (_) => LoginPage());
-      case '/register':
-        return MaterialPageRoute(builder: (_) => RegisterPage());
+        return MaterialPageRoute(builder: (_) => LoginScreen());
+      // case '/register':
+      //   return MaterialPageRoute(builder: (_) => RegisterPage());
       case '/settings':
         return MaterialPageRoute(builder: (_) => SettingsPage());
       case '/messageDetail':

@@ -4,7 +4,7 @@ import '../models/missatge.dart';
 import '../models/comentari.dart';
 
 class ApiProvider {
-  final String baseUrl = "http://10.0.2.2:3000/api";
+  final String baseUrl = "http://192.168.0.48:3000/api";
 
   Future<List<Missatge>> getMissatges() async {
     final response = await http.get(Uri.parse('$baseUrl/posts'));

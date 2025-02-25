@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'providers/login_provider.dart';
-import 'firebase_options.dart';
+// import 'providers/login_provider.dart';
+import 'providers/shared_preferences_provider.dart';
+import 'providers/theme_provider.dart';
 import 'routes/app_router.dart';
+import 'providers/api_provider.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
   runApp(MyApp());
 }
 
@@ -17,14 +15,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => LoginProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider(isDarkMode: false)),
+        Provider(create: (_) => ApiProvider()),
+        Provider(create: (_) => SharedPreferencesProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Anonymous Social App',
         theme: ThemeData.light(),
         darkTheme: ThemeData.dark(),
-        initialRoute: '/',
+        initialRoute: '/splash',
         onGenerateRoute: AppRouter.generateRoute,
       ),
     );
