@@ -43,4 +43,44 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+// Afegir un like
+router.post('/:id/like', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const [result] = await db.query(
+            'UPDATE missatges SET likes = likes + 1 WHERE id = ?',
+            [id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Missatge no trobat' });
+        }
+
+        res.status(200).json({ message: 'Like afegit correctament' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error actualitzant el like' });
+    }
+});
+
+// Afegir un dislike
+router.post('/:id/dislike', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const [result] = await db.query(
+            'UPDATE missatges SET dislikes = dislikes + 1 WHERE id = ?',
+            [id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Missatge no trobat' });
+        }
+
+        res.status(200).json({ message: 'Dislike afegit correctament' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error actualitzant el dislike' });
+    }
+});
+
 module.exports = router;

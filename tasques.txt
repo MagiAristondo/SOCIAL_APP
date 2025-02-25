@@ -1,0 +1,5 @@
+refrescar pantalla quan dones like al home
+
+tots els posts tenen els mateixos comentaris
+
+

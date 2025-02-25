@@ -58,4 +58,37 @@ class ApiProvider {
       throw Exception("Error en crear el comentari");
     }
   }
+
+  Future<void> likeMissatge(int missatgeId) async {
+    final response = await http.post(Uri.parse('$baseUrl/posts/$missatgeId/like'));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error en fer like al missatge");
+    }
+  }
+
+  Future<void> dislikeMissatge(int missatgeId) async {
+    final response = await http.post(Uri.parse('$baseUrl/posts/$missatgeId/dislike'));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error en fer dislike al missatge");
+    }
+  }
+
+  Future<void> likeComentari(int comentariId) async {
+    final response = await http.post(Uri.parse('$baseUrl/comentaris/$comentariId/like'));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error en fer like al comentari");
+    }
+  }
+
+  // Mètode per fer dilike a un comentari
+  Future<void> dislikeComentari(int comentariId) async {
+    final response = await http.post(Uri.parse('$baseUrl/comentaris/$comentariId/dislike'));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error en fer dislike al comentari");
+    }
+  }
 }

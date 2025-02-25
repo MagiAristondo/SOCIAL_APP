@@ -43,7 +43,7 @@ class _NewPostPageState extends State<NewPostPage> {
       });
       
       if (success) {
-        Navigator.pop(context);
+        Navigator.pop(context, true);
       } else {
         setState(() {
           _errorMessage = 'Error en publicar el missatge';
