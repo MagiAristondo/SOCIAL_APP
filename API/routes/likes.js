@@ -3,6 +3,34 @@ const router = express.Router();
 const db = require('../db');
 
 // Afegir un like o dislike
+/**
+ * @swagger
+ * /api/likes:
+ *   post:
+ *     summary: Afegeix un like o dislike
+ *     tags:
+ *       - Likes
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id_usuari:
+ *                 type: integer
+ *               id_post:
+ *                 type: integer
+ *               tipus:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Like/dislike registrat correctament
+ *       400:
+ *         description: Falten camps obligatoris
+ *       500:
+ *         description: Error registrant el like/dislike
+ */
 router.post('/', async (req, res) => {
     const { id_usuari, id_post, tipus } = req.body;
     if (!id_usuari || !id_post || !tipus) {
@@ -20,6 +48,36 @@ router.post('/', async (req, res) => {
 });
 
 // Obtenir el recompte de likes i dislikes per un post
+/**
+ * @swagger
+ * /api/likes/{id_post}:
+ *   get:
+ *     summary: Obté el recompte de likes i dislikes per un post
+ *     tags:
+ *       - Likes
+ *     parameters:
+ *       - in: path
+ *         name: id_post
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Recompte de likes i dislikes retornat correctament
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   tipus:
+ *                     type: string
+ *                   total:
+ *                     type: integer
+ *       500:
+ *         description: Error obtenint els likes/dislikes
+ */
 router.get('/:id_post', async (req, res) => {
     const { id_post } = req.params;
     try {

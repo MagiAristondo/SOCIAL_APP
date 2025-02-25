@@ -4,6 +4,28 @@ const db = require('../db');
 const bcrypt = require('bcrypt');
 
 // Registrar un nou usuari
+/**
+ * @swagger
+ * /api/usuaris/register:
+ *   post:
+ *     summary: Registra un nou usuari
+ *     tags:
+ *       - Usuaris
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               correu:
+ *                 type: string
+ *               contrasenya:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Usuari registrat correctament
+ */
 router.post('/register', async (req, res) => {
     const { correu, contrasenya } = req.body;
     if (!correu || !contrasenya) {
@@ -22,6 +44,30 @@ router.post('/register', async (req, res) => {
 });
 
 // Iniciar sessió
+/**
+ * @swagger
+ * /api/usuaris/login:
+ *   post:
+ *     summary: Inicia sessió
+ *     tags:
+ *       - Usuaris
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               correu:
+ *                 type: string
+ *               contrasenya:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Sessió iniciada correctament
+ *       401:
+ *         description: Credencials incorrectes
+ */
 router.post('/login', async (req, res) => {
     const { correu, contrasenya } = req.body;
     if (!correu || !contrasenya) {

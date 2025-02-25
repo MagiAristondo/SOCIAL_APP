@@ -3,6 +3,39 @@ const router = express.Router();
 const db = require('../db');
 
 // Obtenir tots els missatges
+/**
+ * @swagger
+ * /api/posts:
+ *   get:
+ *     summary: Obté tots els missatges
+ *     tags: 
+ *       - Posts
+ *     responses:
+ *       200:
+ *         description: Llista de missatges retornada correctament
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   text:
+ *                     type: string
+ *                   latitud:
+ *                     type: number
+ *                   longitud:
+ *                     type: number
+ *                   likes:
+ *                     type: integer
+ *                   dislikes:
+ *                     type: integer
+ *                   data_hora:
+ *                     type: string
+ *                     format: date-time
+ */
 router.get('/', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM missatges ORDER BY data_hora DESC');
@@ -13,6 +46,43 @@ router.get('/', async (req, res) => {
 });
 
 // Crear un nou missatge
+/**
+ * @swagger
+ * /api/posts:
+ *   post:
+ *     summary: Crear un nou missatge
+ *     tags:
+ *       - Posts
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               text:
+ *                 type: string
+ *               latitud:
+ *                 type: number
+ *               longitud:
+ *                 type: number
+ *     responses:
+ *       201:
+ *         description: Missatge creat correctament
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 text:
+ *                   type: string
+ *                 latitud:
+ *                   type: number
+ *                 longitud:
+ *                   type: number
+ */
 router.post('/', async (req, res) => {
     const { text, latitud, longitud } = req.body;
     if (!text || latitud === undefined || longitud === undefined || latitud === null || longitud === null) {
@@ -30,6 +100,25 @@ router.post('/', async (req, res) => {
 });
 
 // Esborrar un missatge
+/**
+ * @swagger
+ * /api/posts/{id}:
+ *   delete:
+ *     summary: Esborra un missatge
+ *     tags:
+ *       - Posts
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Missatge eliminat correctament
+ *       404:
+ *         description: Missatge no trobat
+ */
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -44,6 +133,25 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Afegir un like
+/**
+ * @swagger
+ * /api/posts/{id}/like:
+ *   post:
+ *     summary: Afegeix un like a un missatge
+ *     tags:
+ *       - Posts
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Like afegit correctament
+ *       404:
+ *         description: Missatge no trobat
+ */
 router.post('/:id/like', async (req, res) => {
     try {
         const { id } = req.params;
@@ -64,6 +172,25 @@ router.post('/:id/like', async (req, res) => {
 });
 
 // Afegir un dislike
+/**
+ * @swagger
+ * /api/posts/{id}/dislike:
+ *   post:
+ *     summary: Afegeix un dislike a un missatge
+ *     tags:
+ *       - Posts
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Dislike afegit correctament
+ *       404:
+ *         description: Missatge no trobat
+ */
 router.post('/:id/dislike', async (req, res) => {
     try {
         const { id } = req.params;

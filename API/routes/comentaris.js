@@ -3,6 +3,39 @@ const router = express.Router();
 const db = require('../db');
 
 // Obtenir comentaris d'un missatge
+/**
+ * @swagger
+ * /api/comentaris/{id_missatge}:
+ *   get:
+ *     summary: Obté tots els comentaris d'un missatge
+ *     tags:
+ *       - Comentaris
+ *     parameters:
+ *       - in: path
+ *         name: id_missatge
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Llista de comentaris retornada correctament
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   id_missatge:
+ *                     type: integer
+ *                   text:
+ *                     type: string
+ *                   data_hora:
+ *                     type: string
+ *                     format: date-time
+ */
 router.get('/:id_missatge', async (req, res) => {
     const { id_missatge } = req.params;
     try {
@@ -14,6 +47,28 @@ router.get('/:id_missatge', async (req, res) => {
 });
 
 // Afegir un comentari a un missatge
+/**
+ * @swagger
+ * /api/comentaris:
+ *   post:
+ *     summary: Afegeix un comentari a un missatge
+ *     tags:
+ *       - Comentaris
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id_missatge:
+ *                 type: integer
+ *               text:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Comentari creat correctament
+ */
 router.post('/', async (req, res) => {
     const { id_missatge, text } = req.body;
     if (!id_missatge || !text) {
@@ -31,6 +86,25 @@ router.post('/', async (req, res) => {
 });
 
 // Esborrar un comentari
+/**
+ * @swagger
+ * /api/comentaris/{id}:
+ *   delete:
+ *     summary: Esborra un comentari
+ *     tags:
+ *       - Comentaris
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Comentari eliminat correctament
+ *       404:
+ *         description: Comentari no trobat
+ */
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
