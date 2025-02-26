@@ -16,6 +16,7 @@ class _HomePageState extends State<HomePage> {
   List<Missatge> missatges = [];
   bool _isLoading = true;
   String _errorMessage = '';
+  Position? posicioActual;
 
   @override
   void initState() {
@@ -32,38 +33,37 @@ class _HomePageState extends State<HomePage> {
       });
       return;
     }
-    
+
     try {
-    // Obtenir la ubicació actual de l'usuari
-    Position posicioActual = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    
-    List<Missatge> response = await ApiProvider().getMissatges();
-
-    // Filtrar els missatges dins d'un radi de 100 metres
-    List<Missatge> missatgesFiltrats = response.where((missatge) {
-      double distancia = _calcularDistancia(
-        posicioActual.latitude,
-        posicioActual.longitude,
-        missatge.latitud,
-        missatge.longitud,
+      // Obtenir la ubicació actual de l'usuari
+      Position novaPosicio = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
       );
-      return distancia <= 100.0; // Només missatges dins de 100m
-    }).toList();
 
-    setState(() {
-      missatges = missatgesFiltrats;
-      _isLoading = false;
-    });
-  } catch (e) {
-    print("Error carregant missatges: $e");
-    setState(() {
-      _errorMessage = 'Error carregant missatges: $e';
-      _isLoading = false;
-    });
+      List<Missatge> response = await ApiProvider().getMissatges();
+
+      List<Missatge> missatgesFiltrats = response.where((missatge) {
+        double distancia = _calcularDistancia(
+          novaPosicio.latitude,
+          novaPosicio.longitude,
+          missatge.latitud,
+          missatge.longitud,
+        );
+        return distancia <= 100.0; // Només missatges dins de 100m
+      }).toList();
+
+      setState(() {
+        posicioActual = novaPosicio; // Ara posicioActual s'actualitza correctament!
+        missatges = missatgesFiltrats;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Error carregant missatges: $e';
+        _isLoading = false;
+      });
+    }
   }
-}
 
 Future<bool> _demanarPermisos() async {
   LocationPermission permission = await Geolocator.checkPermission();
@@ -127,6 +127,7 @@ double _calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
                       final missatge = missatges[index];
                       return MissatgeItem(
                         missatge: missatge,
+                        posicioActual: posicioActual,
                         onTap: () {
                           Navigator.pushNamed(
                             context,

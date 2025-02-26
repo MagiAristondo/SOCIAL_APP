@@ -50,16 +50,22 @@ class _MessageDetailPageState extends State<MessageDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Detall del Missatge"),
-        backgroundColor: const Color.fromARGB(255, 200, 200, 200),
+        backgroundColor: isDarkMode 
+            ? const Color.fromARGB(255, 80, 80, 80)  // Gris més fosc en mode fosc
+            : const Color.fromARGB(255, 200, 200, 200),
       ),
       body: Column(
         children: [
           Container(
-            width: double.infinity, // Amplada completa
-            color: Color.fromARGB(255, 224, 224, 224), // Fons gris clar per tota la secció
+            width: double.infinity,
+            color: isDarkMode 
+                ? const Color.fromARGB(255, 60, 60, 60) // Fons gris fosc en mode fosc
+                : const Color.fromARGB(255, 224, 224, 224),
             padding: const EdgeInsets.all(16.0),
             child: Text(
               widget.missatge.text,
