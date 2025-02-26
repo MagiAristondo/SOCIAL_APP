@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:provider/provider.dart';
+import '../providers/theme_provider.dart';
 import 'login/login_screen.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -9,41 +9,10 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool _isDarkMode = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSettings();
-  }
-
-  Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isDarkMode = prefs.getBool('darkMode') ?? false;
-    });
-  }
-
-  Future<void> _toggleDarkMode(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('darkMode', value);
-    setState(() {
-      _isDarkMode = value;
-    });
-  }
-
-  Future<void> _logout(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('username');
-    await prefs.remove('password');
-    Navigator.pushNamed(
-      context,
-      '/login',
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Configuració"),
@@ -56,18 +25,24 @@ class _SettingsPageState extends State<SettingsPage> {
             ListTile(
               title: Text("Mode Fosc"),
               trailing: Switch(
-                value: _isDarkMode,
-                onChanged: _toggleDarkMode,
+                value: themeProvider.isDarkMode,
+                onChanged: (value) {
+                  themeProvider.toggleTheme();
+                },
               ),
             ),
             ListTile(
               title: Text("Tancar sessió"),
-              leading: Icon(Icons.logout), // Icona a l'esquerra per millorar la UI
-              onTap: () => _logout(context), // Fa que tota la Tile sigui clicable
+              leading: Icon(Icons.logout),
+              onTap: () => _logout(context),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    Navigator.pushNamed(context, '/login');
   }
 }

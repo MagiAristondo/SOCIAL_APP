@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import '../models/missatge.dart';
 import '../providers/api_provider.dart';
 import '../routes/app_router.dart';
@@ -21,19 +24,75 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _carregarMissatges() async {
-    try {
-      List<Missatge> response = await ApiProvider().getMissatges();
+    bool permisos = await _demanarPermisos();
+    if (!permisos) {
       setState(() {
-        missatges = response;
+        _errorMessage = "Els permisos de localització són necessaris per veure missatges propers.";
         _isLoading = false;
       });
-    } catch (e) {
-      print("Error carregant missatges: $e");
-      setState(() {
-        _errorMessage = 'Error carregant missatges: $e';
-        _isLoading = false;
-      });
+      return;
     }
+    
+    try {
+    // Obtenir la ubicació actual de l'usuari
+    Position posicioActual = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    
+    List<Missatge> response = await ApiProvider().getMissatges();
+
+    // Filtrar els missatges dins d'un radi de 100 metres
+    List<Missatge> missatgesFiltrats = response.where((missatge) {
+      double distancia = _calcularDistancia(
+        posicioActual.latitude,
+        posicioActual.longitude,
+        missatge.latitud,
+        missatge.longitud,
+      );
+      return distancia <= 100.0; // Només missatges dins de 100m
+    }).toList();
+
+    setState(() {
+      missatges = missatgesFiltrats;
+      _isLoading = false;
+    });
+  } catch (e) {
+    print("Error carregant missatges: $e");
+    setState(() {
+      _errorMessage = 'Error carregant missatges: $e';
+      _isLoading = false;
+    });
+  }
+}
+
+Future<bool> _demanarPermisos() async {
+  LocationPermission permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      return false; // Permís denegat
+    }
+  }
+  if (permission == LocationPermission.deniedForever) {
+    return false; // Permís denegat permanentment
+  }
+  return true; // Permís concedit
+}
+
+// Funció per calcular la distància entre dues coordenades en metres
+double _calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
+  const double radioTerra = 6371000; // en metres
+  double dLat = (lat2 - lat1) * (pi / 180);
+  double dLon = (lon2 - lon1) * (pi / 180);
+
+  double a = 
+      (sin(dLat / 2) * sin(dLat / 2)) +
+      cos(lat1 * (pi / 180)) *
+      cos(lat2 * (pi / 180)) *
+      (sin(dLon / 2) * sin(dLon / 2));
+
+  double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+  return radioTerra * c; // Retorna la distància en metres
   }
 
   @override

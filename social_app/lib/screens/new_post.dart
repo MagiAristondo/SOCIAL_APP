@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import '../providers/api_provider.dart';
 import '../models/missatge.dart';
 
@@ -19,29 +20,33 @@ class _NewPostPageState extends State<NewPostPage> {
       });
       return;
     }
-    
+
     setState(() {
       _isLoading = true;
       _errorMessage = '';
     });
-    
+
+    Position posicioActual = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
     Missatge newMessage = Missatge(
-      id: 0, // L'ID es genera automàticament a la BD
+      id: 0,
       text: _messageController.text.trim(),
       dataHora: DateTime.now(),
       likes: 0,
       dislikes: 0,
-      latitud: 0.0, // Placeholder de moment
-      longitud: 0.0, // Placeholder de moment
+      latitud: posicioActual.latitude,
+      longitud: posicioActual.longitude,
     );
 
     try {
       bool success = await ApiProvider().createMissatge(newMessage);
-      
+
       setState(() {
         _isLoading = false;
       });
-      
+
       if (success) {
         Navigator.pop(context, true);
       } else {
